@@ -25,58 +25,75 @@ public class main {
         int numThreads = sc.nextInt();  
         threadCheck(numThreads);        
         if (useArr) {
-            /**
-             * Fills the test array with random values
-             * Starts timer
-             * Begins sorting
-             * Stops timer
-             * Prints total sort time
-             */
-            fillArr(arr);            
-            long start = System.nanoTime();
-            mergesort sort = new mergesort(arr,numThreads,0,arr.length-1);            
-            sort.parallelSort(arr,0,arr.length-1);            
-            // sort.printArray();                        
-            long end = System.nanoTime();
-            long total = (end - start)/1000000;
-            System.out.println("Total sort time: " + total + " ms.");
-        } else if(useFile){
-            /**
+            sortWithArray(arr,numThreads);
+        } else if(useFile){       
+            System.out.println("Enter input file name");        
+            String fileName = sc.next();             
+            File file = new File(fileName);    
+            if (file.exists()) {
+                setFileLength(file);
+                int arr2[] = new int[temp.size()];
+                sortWithFile(file,arr2,numThreads);  
+            } else {
+                System.out.println("The file '" + fileName + "' does not exist in this directory.");
+            }        
+            
+        }
+    } 
+
+    private static void sortWithArray(int arr[],int numThreads){
+      /**
+        * Fills the test array with random values
+        * Starts timer
+        * Begins sorting
+        * Stops timer
+        * Prints total sort time
+        */
+        fillArr(arr);            
+        long start = System.nanoTime();
+        mergesort sort = new mergesort(arr,numThreads,0,arr.length-1);            
+        sort.parallelSort(arr,0,arr.length-1);            
+        // sort.printArray();                        
+        long end = System.nanoTime();
+        long total = (end - start)/1000000;
+        System.out.println("Total sort time: " + total + " ms.");  
+    }
+
+    private static void sortWithFile(File file,int arr2[],int numThreads) {
+        /**
              * Creates a file object linked to file in the directory
              * Finds how many values there are in the file
              * Creates an array and stores the file values in the array
              * Starts timer
              * Sorts the array
              * Stops timer
-             */
-            
-            File file = new File("MergeSortInput.txt");            
-            setFileLength(file);
-            System.out.println("This file has " + temp.size() + " values.");
-            int arr2[] = new int[temp.size()];
-            fillFromFile(arr2,file);            
-            long start = System.nanoTime();
-            mergesort sort = new mergesort(arr2,numThreads,0,arr2.length-1);                   
-            sort.parallelSort(arr2,0,arr2.length-1);           
-            sort.printArray();
-            long end = System.nanoTime();
-            long total = (end - start)/1000000;
-            System.out.println("Total sort time: " + total + " ms.");
-        }
+             */        
+        System.out.println("This file has " + temp.size() + " values.");        
+        fillFromFile(arr2,file);            
+        long start = System.nanoTime();
+        mergesort sort = new mergesort(arr2,numThreads,0,arr2.length-1);                   
+        sort.parallelSort(arr2,0,arr2.length-1);    
+        System.out.println("Sorted Array");       
+        sort.printArray();
+        long end = System.nanoTime();
+        long total = (end - start)/1000000;
+        System.out.println("Total sort time: " + total + " ms."); 
+    }
 
-    } 
+
     // Fills an array with file values
-    public static void fillFromFile(int arr[],File file) {
+    private static void fillFromFile(int arr[],File file) {
         for (int i = 0; i < temp.size(); i++) {
             arr[i] = temp.get(i);
         }
+        System.out.println("File values");
         for (int x: arr) {
             System.out.print(x + " ");
         }
         System.out.println();
     }
     // Finds how many values are in the input file
-    public static void setFileLength(File file) {
+    private static void setFileLength(File file) {
         try (Scanner sc = new Scanner(file)) {
 			while(sc.hasNext()){                	                
                 temp.add(sc.nextInt());                
