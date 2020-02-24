@@ -89,7 +89,7 @@ public class mergesort extends Thread {
             merge(arr, l, m, r); 
         } 
     }  
-
+    // Allows new threads to start sorting their portion of the array
     @Override
     public void run(){
         parallelSort(arr, start, end);
@@ -124,30 +124,6 @@ public class mergesort extends Thread {
             }
         } 
     }  
-
-    // @Override
-    // protected void compute() {        
-    //     if (start < end) {
-    //         // Only makes more threads if the max number hasn't been reached
-    //         if (maxThreads == 1) {
-    //             sort(arr, start, end);                
-    //         }
-    //         else if(maxThreads > numThreads){
-    //             /**
-    //              * Gets the mid point of the current array so that the left and right sides of each new sub array can be sorted
-    //             */
-    //             numThreads++;
-    //             int midPoint = (start + end)/2;
-    //             mergesort left  = new mergesort(arr, start, midPoint);
-    //             mergesort right = new mergesort(arr, midPoint+1, end);
-    //             invokeAll(left,right);
-    //             merge(arr,start,midPoint,end);
-    //         }
-    //         else{
-    //             sort(arr, start, end);
-    //         }
-    //     }
-    // }
 
     public void printArray(){        
         for (int i=0; i<arr.length; ++i){
