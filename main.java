@@ -18,7 +18,7 @@ public class main {
          * Allows user to chose how many threads will be used in sorting
          * Checks to see if the user is using a reasonable number of threads
          */
-        int arr[] = new int[10];
+        int arr[] = new int[1000000];
         Scanner sc = new Scanner(System.in); 
         System.out.println("Would you like to use an input file or generate and array? Enter 1 for File or 0 for Array");
         int inputMethod = sc.nextInt();  
@@ -37,10 +37,10 @@ public class main {
             fillArr(arr);            
             long start = System.currentTimeMillis();
             mergesort sort = new mergesort(arr,numThreads,0,arr.length-1);
-            ForkJoinPool pool = new ForkJoinPool();
-            
-            pool.invoke(sort);
-            sort.printArray();  
+            // ForkJoinPool pool = new ForkJoinPool();
+            sort.parallelSort(arr,0,arr.length-1);
+            // pool.invoke(sort);
+            // sort.printArray();  
                       
             long end = System.currentTimeMillis();
             long total = end - start;
@@ -62,10 +62,10 @@ public class main {
             fillFromFile(arr2,file);
             long start = System.nanoTime();
             mergesort sort = new mergesort(arr,numThreads,0,arr.length-1);
-            ForkJoinPool pool = new ForkJoinPool();        
-            
-            pool.invoke(sort);
-            sort.printArray();       
+            // ForkJoinPool pool = new ForkJoinPool();        
+            sort.parallelSort(arr,0,arr.length-1);
+            // pool.invoke(sort);
+            // sort.printArray();       
 
             long end = System.nanoTime();
             long total = (end - start);
