@@ -1,11 +1,41 @@
 /**
  * Algorithm taken from https://www.geeksforgeeks.org/merge-sort/
  */
-public class mergesort {
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.RecursiveAction;
+
+public class mergesort extends RecursiveAction {
+    private int[] arr;
+    private static int maxThreads;
+    private static int numThreads;
+    private int start;
+    private int end;
+
+    // Initial contructor
+    public mergesort(int arr[], int maxThreads, int start, int end) {
+        this.arr = arr;
+        this.maxThreads = maxThreads;
+        this.start = start;
+        this.end = end;
+        if (arr.length < 15) {
+            System.out.print("Array entered: ");
+            printArray();
+            System.out.println();
+            System.out.print("Sorted  array: ");
+        }
+    }
+
+    // Constructor for recursive calls
+    public mergesort(int arr[], int start, int end) {
+        this.arr = arr;        
+        this.start = start;
+        this.end = end;        
+    }
+
     // Merges two subarrays of arr[]. 
     // First subarray is arr[l..m] 
     // Second subarray is arr[m+1..r] 
-    void merge(int arr[], int l, int m, int r){ 
+    public void merge(int arr[], int l, int m, int r){ 
         // Find sizes of two subarrays to be merged 
         int n1 = m - l + 1; 
         int n2 = r - m;  
@@ -49,8 +79,8 @@ public class mergesort {
         } 
     } 
     // Main function that sorts arr[l..r] using 
-    // merge() 
-    void sort(int arr[], int l, int r){ 
+    // merge()
+    public void sort(int arr[], int l, int r){ 
         if (l < r){ 
             // Find the middle point 
             int m = (l+r)/2;  
@@ -61,11 +91,35 @@ public class mergesort {
             merge(arr, l, m, r); 
         } 
     }  
-    /* A utility function to print array of size n */
-    static void printArray(int arr[]){ 
-        int n = arr.length; 
-        for (int i=0; i<n; ++i) 
+    
+    @Override
+    protected void compute() {        
+        if (start < end) {
+            // Only makes more threads if the max number hasn't been reached
+            if (maxThreads == 1) {
+                sort(arr, start, end);                
+            }
+            else if(maxThreads > numThreads){
+                /**
+                 * Gets the mid point of the current array so that the left and right sides of each new sub array can be sorted
+                */
+                numThreads++;
+                int midPoint = (start + end)/2;
+                mergesort left  = new mergesort(arr, start, midPoint);
+                mergesort right = new mergesort(arr, midPoint+1, end);
+                invokeAll(left,right);
+                merge(arr,start,midPoint,end);
+            }
+            else{
+                sort(arr, start, end);
+            }
+        }
+    }
+
+    public void printArray(){        
+        for (int i=0; i<arr.length; ++i){
             System.out.print(arr[i] + " "); 
-        System.out.println(); 
+        }      
+        System.out.println();  
     }  
 }
