@@ -3,8 +3,6 @@ import java.util.Random;
 import java.util.Scanner;
 import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.RecursiveAction;
 
 public class main {
 
@@ -35,16 +33,13 @@ public class main {
              * Prints total sort time
              */
             fillArr(arr);            
-            long start = System.currentTimeMillis();
-            mergesort sort = new mergesort(arr,numThreads,0,arr.length-1);
-            // ForkJoinPool pool = new ForkJoinPool();
-            sort.parallelSort(arr,0,arr.length-1);
-            // pool.invoke(sort);
-            // sort.printArray();  
-                      
-            long end = System.currentTimeMillis();
-            long total = end - start;
-            System.out.println("Total sort time: " + total + " ns.");
+            long start = System.nanoTime();
+            mergesort sort = new mergesort(arr,numThreads,0,arr.length-1);            
+            sort.parallelSort(arr,0,arr.length-1);            
+            // sort.printArray();                        
+            long end = System.nanoTime();
+            long total = (end - start)/1000000;
+            System.out.println("Total sort time: " + total + " ms.");
         } else if(useFile){
             /**
              * Creates a file object linked to file in the directory
@@ -54,22 +49,19 @@ public class main {
              * Sorts the array
              * Stops timer
              */
+            
             File file = new File("MergeSortInput.txt");            
             setFileLength(file);
             System.out.println("This file has " + temp.size() + " values.");
-            int arr2[] = new int[temp.size()]; 
-
-            fillFromFile(arr2,file);
+            int arr2[] = new int[temp.size()];
+            fillFromFile(arr2,file);            
             long start = System.nanoTime();
-            mergesort sort = new mergesort(arr,numThreads,0,arr.length-1);
-            // ForkJoinPool pool = new ForkJoinPool();        
-            sort.parallelSort(arr,0,arr.length-1);
-            // pool.invoke(sort);
-            // sort.printArray();       
-
+            mergesort sort = new mergesort(arr2,numThreads,0,arr2.length-1);                   
+            sort.parallelSort(arr2,0,arr2.length-1);           
+            sort.printArray();
             long end = System.nanoTime();
-            long total = (end - start);
-            System.out.println("Total sort time: " + total + " ns.");
+            long total = (end - start)/1000000;
+            System.out.println("Total sort time: " + total + " ms.");
         }
 
     } 
@@ -78,6 +70,10 @@ public class main {
         for (int i = 0; i < temp.size(); i++) {
             arr[i] = temp.get(i);
         }
+        for (int x: arr) {
+            System.out.print(x + " ");
+        }
+        System.out.println();
     }
     // Finds how many values are in the input file
     public static void setFileLength(File file) {
